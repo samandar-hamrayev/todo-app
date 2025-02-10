@@ -1,0 +1,17 @@
+# virtual muhitni ko'rsatmaslik
+.venv/
+
+# OS va IDE fayllari
+__pycache__/
+*.pyc
+*.pyo
+*DB_store
+*vscode/
+.idea/
+
+# muhit veriablas
+.env
+
+# Kesh va Log faylllar
+*.log
+*.cache
