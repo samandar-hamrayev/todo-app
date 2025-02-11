@@ -1,13 +1,22 @@
 from datetime import datetime
-from utils.user_utils import UserUtils
+from enum import Enum
+
+from utils import UserUtils
 
 
 class User:
-    def __init__(self, username, email, password):
+    def __init__(self, username: str, email: str, role: str, password: str,):
         self.username = username
         self.email = email
-        self.password = password
-        self.created_at = UserUtils.time_formatter(datetime.now())
-        self.updated_at = UserUtils.time_formatter(datetime.now())
-    
+        self.password = UserUtils.hash_password(password)
+        self.role = role
+        self.created_at = datetime.now()
+        self.updated_at = datetime.now()
+
+    def display(self):
+        return (f"Username: {self.username}\n"
+                f"Email: {self.email}\n"
+                f"Creating at: {self.created_at}")
+    def __repr__(self):
+        return f"{self.username} || {self.updated_at}"
     
