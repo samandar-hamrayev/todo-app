@@ -38,12 +38,26 @@ class UserDB:
 
     def get_by_id(self, user_id: int) -> tuple:
         query = """
-        SELECT id, username, email, role, created_at, updated_at FROM users WHERE id = %s;
+        SELECT id, username, email, role, password, created_at, updated_at FROM users WHERE id = %s;
         """
         self.cur.execute(query, (user_id, ))
         return self.cur.fetchone()
 
-    
+    def get_by_email(self, email):
+        query = """
+        SELECT id, username, email, role, password, created_at, updated_at FROM users WHERE email = %s;
+        """
+        self.cur.execute(query, (email, ))
+        return self.cur.fetchone()
+
+    def get_by_username(self, username):
+        query = """
+        SELECT id, username, email, role, password, created_at, updated_at FROM users WHERE username = %s;
+        """
+        self.cur.execute(query, (username, ))
+        return self.cur.fetchone()
+
+
     def get_all(self) -> list[tuple]:
         query = """
         SELECT id, username, email, role, created_at, updated_at FROM  users;
