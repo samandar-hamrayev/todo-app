@@ -27,7 +27,7 @@ class TodoDB:
         self.cur.execute(query)
         self.conn.commit()
 
-    def add(self, todo: Todo) -> int:
+    def add(self, todo: Todo) -> tuple:
         query = """
         INSERT INTO todos (user_id, title, description, priority, due_date, is_completed, created_at, updated_at)
         VALUES (%s, %s, %s, %s, %s, %s, %s, %s) RETURNING id;
@@ -46,7 +46,8 @@ class TodoDB:
             ),
         )
         self.conn.commit()
-        return self.cur.fetchone()[0]  # Yangi todo ID ni qaytaradi
+        return self.cur.fetchone()  # Yangi todo ID ni qaytaradi
+
 
     def get_by_id(self, todo_id: int) -> tuple:
         query = "SELECT * FROM todos WHERE id = %s;"
@@ -54,10 +55,22 @@ class TodoDB:
         return self.cur.fetchone()
 
 
+    def get_by_user_id(self, user_id):
+        query = """SELECT * FROM todos WHERE user_id = %s;"""
+        self.cur.execute(query, (user_id, ))
+        return self.cur.fetchall()
+
+    def get_by_title_from_user(self, user_id, title):
+        query = """SELECT * FROM todos WHERE user_id = %s AND title =%s;"""
+        self.cur.execute(query, (user_id, title))
+        return self.cur.fetchone()
+
+
     def get_all(self) -> list[tuple]:
         query = "SELECT * FROM todos;"
         self.cur.execute(query)
         return self.cur.fetchall()
+
 
     def update(self, user_id, new_data):
         set_clause = ", ".join([f"{key} = %s" for key in new_data.keys()])
@@ -71,10 +84,12 @@ class TodoDB:
         self.cur.execute(query, values)
         self.conn.commit()
 
+
     def delete(self, todo_id: int):
         query = "DELETE FROM todos WHERE id = %s;"
         self.cur.execute(query, (todo_id,))
         self.conn.commit()
+
 
     def close(self):
         self.cur.close()

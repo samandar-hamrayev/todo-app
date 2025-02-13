@@ -59,6 +59,8 @@ class HomePage:
         else:
             print(f"Siz ro‘yxatdan o‘tdingiz! ID: {new_user[0]}")
             return new_user
+        finally:
+            userdb.close()
 
     @staticmethod
     def login() -> None | tuple:
