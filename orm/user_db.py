@@ -58,16 +58,17 @@ class UserDB:
         return self.cur.fetchone()
 
 
-    def get_all(self) -> list[tuple]:
+    def get_all(self, admin_id) -> list[tuple]:
         query = """
         SELECT 
             u.id, u.username, u.email, u.role,  u.created_at,  u.updated_at, COUNT(t.id) AS todo_count
             FROM users u
             LEFT JOIN todos t ON u.id = t.user_id
+            WHERE u.id != %s
             GROUP BY u.id, u.username, u.email, u.role, u.created_at, u.updated_at
             ORDER BY todo_count DESC;
         """
-        self.cur.execute(query)
+        self.cur.execute(query, (admin_id, ))
         return self.cur.fetchall()
 
 

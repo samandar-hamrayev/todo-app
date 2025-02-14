@@ -30,8 +30,8 @@ class BaseUserPage(BasePage):
         console.print(f"\n[b]Username:[/b] {user[1]}")
         console.print(f"[b]Email:[/b] {user[2]}")
         console.print(f"[b]Role:[/b] {user[3]}")
-        console.print(f"[b]Yaratilgan vaqti:[/b] {user[5]}\n")
-        console.print(f"[b]Oxirgi yangilangan vaqti:[/b] {user[6]}\n")
+        console.print(f"[b]Yaratilgan vaqti:[/b] {UserUtils.time_formatter(str(user[5]))}")
+        console.print(f"[b]Oxirgi yangilangan vaqti:[/b] {UserUtils.time_formatter(str(user[6]))}")
 
         print("1. ✏️ Profilni yangilash")
         print("2. 🔑 Parolni o'zgartirish")
@@ -101,13 +101,13 @@ class BaseUserPage(BasePage):
                     print("Bu ma’lumot bilan foydalanuvchi mavjud, boshqa kiriting.")
                     continue
                 return value
-        username = get_input("Username (hozirgi: {}: ".format(old_user[1]),
+        username = get_input("Username (hozirgi: {}):".format(old_user[1]),
                              UserUtils.username_validator,
                              userdb.get_by_username,
                              "Yaroqsiz username",
                              old_user[1])
 
-        email = get_input("Email (hozirgi: {}: ".format(old_user[2]),
+        email = get_input("Email (hozirgi: {}):".format(old_user[2]),
                              UserUtils.email_validator,
                              userdb.get_by_email,
                              "Yaroqsiz email",
@@ -135,8 +135,8 @@ class BaseUserPage(BasePage):
             print("O'chirish bekor qilindi.")
 
 
-    def view_todos(self):
-        todos = tododb.get_by_user_id(self.user[0])
+    def view_todos(self, user_id):
+        todos = tododb.get_by_user_id(user_id)
         if not todos:
             print("Sizda hali todo mavjud emas.")
             return
@@ -174,9 +174,9 @@ class BaseUserPage(BasePage):
         console.print(f"[b]Description:[/b] {todo[3]}")
         console.print(f"[b]Priority:[/b] {todo[4]}")
         console.print(f"[b]Status:[/b] {'✅ Bajarildi' if todo[6] else '❌ Bajarilmagan'}")
-        console.print(f"[b]Oxirgi muddat:[/b] {todo[5]}\n")
-        console.print(f"[b]Yaratilgan muddat:[/b] {todo[7]}\n")
-        console.print(f"[b]Oxirgi yangilangan muddat:[/b] {todo[8]}\n")
+        console.print(f"[b]Oxirgi muddat:[/b] {UserUtils.time_formatter(str(todo[5]))}\n")
+        console.print(f"[b]Yaratilgan muddat:[/b] {UserUtils.time_formatter(str(todo[7]))}\n")
+        console.print(f"[b]Oxirgi yangilangan muddat:[/b] {UserUtils.time_formatter(str(todo[8]))}\n")
 
         print("1. ✅ Bajarilgan deb belgilash")
         print("2. ✏️ Yangilash")

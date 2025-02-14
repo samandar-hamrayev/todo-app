@@ -81,7 +81,7 @@ def main():
                     if base_choice == '1':
                         base_page.add_todo()
                     elif base_choice == '2':
-                        base_page.view_todos()
+                        base_page.view_todos(base_page.user[0])
                     elif base_choice == '3':
                         if base_page.view_user_detail() == 'deleted':
                             break
