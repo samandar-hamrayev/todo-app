@@ -77,7 +77,7 @@ class TodoDB:
         values = list(new_data.values()) + [user_id]
 
         query = f"""
-        UPDATE users 
+        UPDATE todos 
         SET {set_clause}, updated_at = CURRENT_TIMESTAMP
         WHERE id = %s;
         """

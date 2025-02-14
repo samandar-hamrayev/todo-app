@@ -1,6 +1,6 @@
 """"Bu yerga hamma mehmanizmlarni yigib turadigan asosiy kodlar yoziladi"""
 from pages.home import HomePage
-from pages.base import BaseUserPage
+from pages.userbase import BaseUserPage
 
 def main():
     while True:

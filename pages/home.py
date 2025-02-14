@@ -59,8 +59,6 @@ class HomePage:
         else:
             print(f"Siz ro‘yxatdan o‘tdingiz! ID: {new_user[0]}")
             return new_user
-        finally:
-            userdb.close()
 
     @staticmethod
     def login() -> None | tuple:
@@ -101,19 +99,3 @@ class HomePage:
         else:
             print("Login yoki parol xato.")
             return None
-
-
-# print(HomePage.register())
-
-from rich.console import Console
-from rich.table import Table
-
-console = Console()
-table = Table(title="Todo List")
-table.add_column("ID", style="cyan")
-table.add_column("Vazifa", style="magenta")
-table.add_column("Holat", style="green")
-
-table.add_row("1", "Python o‘rganish", "Bajarilmagan")
-table.add_row("2", "Leetcode 3 ta masala yechish", "Bajarilgan")
-console.print(table)

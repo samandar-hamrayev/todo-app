@@ -6,7 +6,6 @@ import datetime
 from models.todo_model import Todo
 from utils import UserUtils
 
-from laboratoroya import username
 from orm.todo_db import TodoDB
 
 
@@ -32,14 +31,19 @@ class BaseUserPage(BasePage):
 
         id_map = {}
         for idx, todo in enumerate(todos, 1):
-            id_map[idx] = todo[0]
+            id_map[str(idx)] = todo[0]
             status = "✅ Bajarildi" if todo[6] else "❌ Bajarilmagan"
-            table.add_row(str(idx), todo[2], status, todo[5])
+            table.add_row(str(idx), todo[2], status, UserUtils.time_formatter(str(todo[5])))
         console.print(table)
 
         while True:
-            """todoni batafsil korish uchun index kiritish"""
-            pass
+            select_index = input("Ko‘rmoqchi bo‘lgan todo tartib raqamini kiriting (orqaga qaytish uchun 'exit'): ").strip()
+            if select_index.lower() == "exit":
+                return None
+            if select_index in id_map.keys():
+                self.view_todo_detail(id_map[select_index])
+                break
+            print("Noto‘g‘ri tanlov, qayta kiriting.")
 
     def view_todo_detail(self, todo_id):
         todo = tododb.get_by_id(todo_id)
@@ -70,14 +74,17 @@ class BaseUserPage(BasePage):
                 self.update_todo(todo_id, todo)
                 break
             elif choise == '3':
-                self.delete_todo(todo_id)
+                res = self.delete_todo(todo_id)
+                if res:
+                    return None
             elif choise == '4':
                 return None
             else:
                 print("Noto'g'ri tanlov, qayta kiriting.")
 
+
     def mark_todo_done(self, todo_id):
-        tododb.update(todo_id, {'status', True})
+        tododb.update(todo_id, {'is_completed': True})
         print("✅ Todo bajarildi deb belgilandi.")
 
     def delete_todo(self, todo_id):
@@ -85,6 +92,7 @@ class BaseUserPage(BasePage):
         if confirm.lower() == 'yes':
             tododb.delete(todo_id)
             print("❌ Todo o‘chirildi.")
+            return True
         else:
             print("O'chirish bekor qilindi.")
 
@@ -118,14 +126,19 @@ class BaseUserPage(BasePage):
                              old_todo[4])
 
         while True:
-            days = input("Oxirgi muddat - necha kun? (hozirgi: {} kun): ".format(old_todo[5].days)).strip()
-            hours = input(
-                "Oxirgi muddat - necha soat? (hozirgi: {} soat): ".format(old_todo[5].seconds // 3600)).strip()
+            todo_deadline = old_todo[5]
+            now = datetime.datetime.now()
+            time_remaining = todo_deadline - now
+
+            days_left = time_remaining.days
+            hours_left = (time_remaining.seconds // 3600)
+            days = input(f"Oxirgi muddat - necha kun? (hozirgi: {days_left} kun): ").strip()
+            hours = input(f"Oxirgi muddat - necha soat? (hozirgi: {hours_left} soat): ").strip()
 
             if not days:
-                days = old_todo[5].days
+                days = old_todo[5].day
             if not hours:
-                hours = old_todo[5].seconds // 3600
+                hours = old_todo[5].second // 3600
 
             try:
                 days = int(days)
@@ -167,7 +180,7 @@ class BaseUserPage(BasePage):
 
         title = get_input("Title kiriting:",
                           lambda txt: not txt.isdigit(),
-                          tododb.get_by_title_from_user,
+                          lambda title: tododb.get_by_title_from_user(self.user[0], title),
                           "Title faqat raqam bo'lmasligi kerak")
         if title == "base":
             return None
@@ -215,8 +228,3 @@ class BaseUserPage(BasePage):
             print(f"❌ Todo yaratilmadi, xato: {err}")
         else:
             print(f"✅ Todo yaratildi! ID: {new_todo[0]}")
-
-
-
-class BaseAdminPage(BasePage):
-    pass
