@@ -62,9 +62,7 @@ class HomePage:
 
     @staticmethod
     def login() -> None | tuple:
-        """Foydalanuvchini tizimga kiritish"""
         def get_input(prompt: str, validator=None, home_exit=True):
-            """Umumiy input olish funksiyasi, home qaytish qo‘shilgan"""
             while True:
                 value = str(input(prompt)).strip()
                 if home_exit and value.lower() == "home":

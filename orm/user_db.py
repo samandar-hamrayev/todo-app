@@ -60,17 +60,25 @@ class UserDB:
 
     def get_all(self) -> list[tuple]:
         query = """
-        SELECT id, username, email, role, created_at, updated_at FROM  users;
+        SELECT 
+            u.id, u.username, u.email, u.role,  u.created_at,  u.updated_at, COUNT(t.id) AS todo_count
+            FROM users u
+            LEFT JOIN todos t ON u.id = t.user_id
+            GROUP BY u.id, u.username, u.email, u.role, u.created_at, u.updated_at
+            ORDER BY todo_count DESC;
         """
         self.cur.execute(query)
         return self.cur.fetchall()
 
 
-    def update(self, user_id, new_data):
-        query = """
-        UPDATE users SET username = %s, email = %s, role = %s, password = %s, updated_at = CURRENT_TIMESTAMP WHERE id = %s;
+    def update(self, user_id, new_data:dict):
+        set_clause = ", ".join([f"{key} = %s" for key in new_data.keys()])
+        values = list(new_data.values()) + [user_id]
+
+        query = f"""
+        UPDATE users SET {set_clause}, updated_at = CURRENT_TIMESTAMP WHERE id = %s;
         """
-        self.cur.execute(query, (new_data['username'], new_data['email'], new_data['role'], new_data['password'], user_id))
+        self.cur.execute(query, values)
         self.conn.commit()
 
 

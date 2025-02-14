@@ -67,14 +67,14 @@ class TodoDB:
 
 
     def get_all(self) -> list[tuple]:
-        query = "SELECT * FROM todos;"
+        query = "SELECT * FROM todos ORDER BY due_date;"
         self.cur.execute(query)
         return self.cur.fetchall()
 
 
-    def update(self, user_id, new_data):
+    def update(self,todo_id, new_data):
         set_clause = ", ".join([f"{key} = %s" for key in new_data.keys()])
-        values = list(new_data.values()) + [user_id]
+        values = list(new_data.values()) + [todo_id]
 
         query = f"""
         UPDATE todos 

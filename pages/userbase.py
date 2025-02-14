@@ -7,9 +7,11 @@ from models.todo_model import Todo
 from utils import UserUtils
 
 from orm.todo_db import TodoDB
+from orm.user_db import UserDB
+from utils import UserUtils
 
 
-
+userdb = UserDB()
 tododb = TodoDB()
 
 class BasePage:
@@ -17,6 +19,122 @@ class BasePage:
         self.user = user
 
 class BaseUserPage(BasePage):
+    def view_user_detail(self):
+        user_id = self.user[0]
+        user = userdb.get_by_id(user_id)
+        if not user:
+            print("Foydalanuvchi topilmadi.")
+            return None
+
+        console = Console()
+        console.print(f"\n[b]Username:[/b] {user[1]}")
+        console.print(f"[b]Email:[/b] {user[2]}")
+        console.print(f"[b]Role:[/b] {user[3]}")
+        console.print(f"[b]Yaratilgan vaqti:[/b] {user[5]}\n")
+        console.print(f"[b]Oxirgi yangilangan vaqti:[/b] {user[6]}\n")
+
+        print("1. ✏️ Profilni yangilash")
+        print("2. 🔑 Parolni o'zgartirish")
+        print("3. ❌ Profilni o‘chirish")
+        print("4. 🔙 Orqaga qaytish")
+
+        while True:
+            choice = input("Tanlovni kiriting: ").strip()
+            if choice == '1':
+                self.update_user(user_id, user)
+                break
+            elif choice == '2':
+                res = self.change_password(user_id)
+                if res:
+                    print("Parolingiz yangilandi.")
+                else:
+                    print("Avvalgi parol mos kelmadi, qayta urinib ko'ring.")
+                break
+            elif choice == '3':
+                res = self.delete_user(user_id)
+                if res:
+                    return 'deleted'
+                else:
+                    return 'cancelled'
+            elif choice == '4':
+                return None
+            else:
+                print("Noto'g'ri tanlov, qayta kiriting.")
+
+    def change_password(self, user_id):
+        def get_input(prompt: str, validator=None, back_exit=True):
+            while True:
+                value = str(input(prompt)).strip()
+                if back_exit and value.lower() == "back":
+                    print("Profil sahifasiga qaytildi.")
+                    return "back"
+                if validator and not validator(value):
+                    print("Nozik parol! Qayta urining.")
+                    continue
+                return value
+        old_password = get_input("Avvalgi parolni kiriting:", UserUtils.password_validator)
+        new_password = get_input("Yangi parolni kiriting:", UserUtils.password_validator)
+
+        user = userdb.get_by_id(user_id)
+        if not UserUtils.verify_password(old_password, user[4]):
+            return False
+        try:
+            userdb.update(user_id, {'password': UserUtils.hash_password(new_password)})
+        except Exception as err:
+            return False
+        else:
+            return True
+
+
+    def update_user(self, user_id, old_user):
+        user_info = {}
+
+        def get_input(prompt, validator=None, db_check=None, error_msg="Noto‘g‘ri qiymat!", old_value=None):
+            while True:
+                value = input(prompt).strip()
+                if not value:
+                    return old_value
+                if validator and not validator(value):
+                    print(error_msg)
+                    continue
+                if db_check and db_check(value) is not None:
+                    print("Bu ma’lumot bilan foydalanuvchi mavjud, boshqa kiriting.")
+                    continue
+                return value
+        username = get_input("Username (hozirgi: {}: ".format(old_user[1]),
+                             UserUtils.username_validator,
+                             userdb.get_by_username,
+                             "Yaroqsiz username",
+                             old_user[1])
+
+        email = get_input("Email (hozirgi: {}: ".format(old_user[2]),
+                             UserUtils.email_validator,
+                             userdb.get_by_email,
+                             "Yaroqsiz email",
+                             old_user[2])
+
+        user_info = {
+            'username': username,
+            'email': email
+        }
+
+        try:
+            userdb.update(user_id, user_info)
+            print("✅ Profil muvaffaqiyatli yangilandi!")
+        except Exception as err:
+            print(f"❌ Xatolik yuz berdi: {err}")
+
+
+    def delete_user(self, user_id):
+        confirm = str(input("Rostdan ham profilni o'chirishni xoxlaysizmi? (yes or any):"))
+        if confirm.lower() == 'yes':
+            userdb.delete(user_id)
+            print("❌ Profil o‘chirildi.")
+            return True
+        else:
+            print("O'chirish bekor qilindi.")
+
+
     def view_todos(self):
         todos = tododb.get_by_user_id(self.user[0])
         if not todos:
@@ -95,6 +213,8 @@ class BaseUserPage(BasePage):
             return True
         else:
             print("O'chirish bekor qilindi.")
+            return False
+
 
 
     def update_todo(self, todo_id, old_todo):
