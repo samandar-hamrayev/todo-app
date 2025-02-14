@@ -4,7 +4,6 @@ from rich.table import Table
 
 import datetime
 from models.todo_model import Todo
-from utils import UserUtils
 
 from orm.todo_db import TodoDB
 from orm.user_db import UserDB
@@ -87,8 +86,6 @@ class BaseUserPage(BasePage):
 
 
     def update_user(self, user_id, old_user):
-        user_info = {}
-
         def get_input(prompt, validator=None, db_check=None, error_msg="Noto‘g‘ri qiymat!", old_value=None):
             while True:
                 value = input(prompt).strip()
@@ -138,7 +135,7 @@ class BaseUserPage(BasePage):
     def view_todos(self, user_id):
         todos = tododb.get_by_user_id(user_id)
         if not todos:
-            print("Sizda hali todo mavjud emas.")
+            print("Hali todo mavjud emas.")
             return
         console = Console()
         table = Table(title="Sizning Todolaringiz", show_header=True, header_style="bold cyan")

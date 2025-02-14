@@ -86,7 +86,7 @@ class BaseAdminPage(BaseUserPage):
         console.print(f"\n[b]Username:[/b] {user[1]}")
         console.print(f"[b]Email:[/b] {user[2]}")
         console.print(f"[b]Role:[/b] {user[3]}")
-        console.print(f"[b]Yaratilgan vaqti:[/b] {UserUtils.time_formatter(str(user[5]))}\n")
+        console.print(f"[b]Yaratilgan vaqti:[/b] {UserUtils.time_formatter(str(user[5]))}")
         console.print(f"[b]Oxirgi yangilangan vaqti:[/b] {UserUtils.time_formatter(str(user[6]))}\n")
 
         print("1. ✏️ Userga admin rolini berish")

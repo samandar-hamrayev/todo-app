@@ -3,7 +3,6 @@ from datetime import datetime
 
 import bcrypt
 
-
 class UserUtils:
     @staticmethod
     def time_formatter(current_time):
@@ -42,7 +41,6 @@ class UserUtils:
         pattern = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$ %^&*-]).{4,}$"
         valid = re.match(pattern, password)
         return True if valid else False
-
 
 
 
