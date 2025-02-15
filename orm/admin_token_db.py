@@ -90,6 +90,11 @@ class AdminTokenDB:
         self.cur.execute(query, (admin_token_id, ))
         self.conn.commit()
 
+    def get_user_invitations(self, email: str):
+        query = """SELECT * FROM admin_tokens WHERE email = %s;"""
+        self.cur.execute(query, (email, ))
+        return self.cur.fetchall()
+
     def close(self):
         self.cur.close()
         self.conn.close()

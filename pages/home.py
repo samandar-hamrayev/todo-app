@@ -1,8 +1,13 @@
 from utils import UserUtils as uu
 from orm.user_db import UserDB
+from orm.admin_token_db import AdminTokenDB
 from models.user_model import User
 
+from orm.config import admins
+
 userdb = UserDB()
+admintokendb = AdminTokenDB()
+
 
 class HomePage:
     @staticmethod
@@ -41,8 +46,49 @@ class HomePage:
         role = get_input("Qanday rol (user/admin):", lambda r: r.lower() in ["user", "admin"], None, "Faqat 'user' yoki 'admin' tanlang!")
         if role == "home":
             return None
-        user_info["role"] = role.lower()
 
+        if role == 'admin' and email not in admins:
+            while True:
+                token = input("Adminlik taklifi tokenini kiriting: ").strip()
+
+                if token == 'user':
+                    print("Yaxshi! User sifatida davom etasiz.")
+                    user_info['role'] = 'user'
+                    break
+
+                if not (token.isdigit() and 999 < int(token) < 10000):
+                    print("Token 4 xonali son bo'lishi kerak, qayta urining.")
+                    continue
+
+                invitations = admintokendb.get_user_invitations(email)
+
+                if not invitations:
+                    print("Sizda adminlik huquqi yo'q. Oddiy user sifatida qo'shilasiz.")
+                    user_info['role'] = 'user'
+                    break
+
+
+                tokens = {data[0]: data[2] for data in invitations if not data[4]}
+
+                if token not in tokens.values():
+                    print(
+                        "Siz tokenni xato kiritdingiz yoki u allaqachon ishlatilgan. (User sifatida davom etish uchun 'user' deb yozing).")
+                    continue
+
+                print("Yaxshi, token to'g'ri kiritildi.")
+                user_info['role'] = 'admin'
+
+                for token_id, val in tokens.items():
+                    if val == token:
+                        admintokendb.update_admin_token(token_id, {'is_used': True})
+                        break
+                break
+
+        elif email in admins:
+            user_info['role'] = 'admin'
+            print("Siz default adminsiz.")
+        else:
+            user_info['role'] = 'user'
         user = User(**user_info)
         print(f"Sizning ma’lumotlaringiz:\n{user.display()}")
 

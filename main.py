@@ -23,7 +23,7 @@ def admin_token_panel(basepage: BaseAdminPage):
 
 def admin_panel(basepage: BaseAdminPage):
     while True:
-        show_menu(["Barcha userlarni ko'rish", "Barcha Todolarni ko'rish", "Admin Tokenlarni ko'rish", "Admin paneldan chiqish"])
+        show_menu(["Barcha userlarni ko'rish", "Barcha Todolarni ko'rish", "Admin Tokenlar sahifasi", "Admin paneldan chiqish"])
         choice = input("Tanlovingiz: ").strip()
         if choice == '1':
             basepage.view_all_users()
