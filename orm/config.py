@@ -10,6 +10,8 @@ class Settings:
     db_host = getenv('DB_HOST')
     db_port = getenv('DB_PORT')
 
+    default_admin_emails = getenv('DEFAULT_ADMIN_EMAILS')
+
 
 # database malumotlarni sozlash
 db_info = {
@@ -19,3 +21,6 @@ db_info = {
     'host': Settings.db_host,
     'port': Settings.db_port
 }
+
+# default admin emaillari
+admins = Settings.default_admin_emails

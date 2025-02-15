@@ -15,7 +15,7 @@ class User:
     def display(self):
         return (f"Username: {self.username}\n"
                 f"Email: {self.email}\n"
-                f"Creating at: {self.created_at}")
+                f"Creating at: {UserUtils.time_formatter(str(self.created_at))}")
     def __repr__(self):
         return f"{self.username} || {self.updated_at}"
     

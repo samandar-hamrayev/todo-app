@@ -2,19 +2,36 @@ from pages.home import HomePage
 from pages.userbase import BaseUserPage
 from pages.adminbase import BaseAdminPage
 
-
 def show_menu(options):
     print("\n" + "\n".join(f"{i}. {opt}" for i, opt in enumerate(options, 1)))
 
+def admin_token_panel(basepage: BaseAdminPage):
+    while True:
+        show_menu(["Admin token qo'shish", "Admin tokenlarni ko'rish", "Admin panelga qaytish"])
+        choise = input("Tanlovingiz: ").strip()
+        if choise == '1':
+            basepage.add_admin_token()
+        elif choise == '2':
+            basepage.view_admin_tokens()
+        elif choise == '3':
+            print("Admin panelga qaytingiz")
+            break
+        else:
+            print("Noto'g'ri tanlov! Qaytadan urinib ko'ring.")
+
+
+
 def admin_panel(basepage: BaseAdminPage):
     while True:
-        show_menu(["Barcha userlarni ko'rish", "Barcha Todolarni ko'rish", "Admin paneldan chiqish"])
+        show_menu(["Barcha userlarni ko'rish", "Barcha Todolarni ko'rish", "Admin Tokenlarni ko'rish", "Admin paneldan chiqish"])
         choice = input("Tanlovingiz: ").strip()
         if choice == '1':
             basepage.view_all_users()
         elif choice == '2':
             basepage.view_all_todos()
         elif choice == '3':
+            admin_token_panel(basepage)
+        elif choice == '4':
             print("Admin paneldan chiqdingiz.")
             break
         else:

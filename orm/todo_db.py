@@ -1,6 +1,5 @@
 import psycopg2
 from orm.config import db_info
-from datetime import datetime
 from models.todo_model import Todo
 
 class TodoDB:
@@ -46,7 +45,7 @@ class TodoDB:
             ),
         )
         self.conn.commit()
-        return self.cur.fetchone()  # Yangi todo ID ni qaytaradi
+        return self.cur.fetchone()
 
 
     def get_by_id(self, todo_id: int) -> tuple:
